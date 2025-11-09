@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "Redum Task Manager API",
+  "description": "API tests for Redum Task Manager backend",
+  "type": "collection"
+}

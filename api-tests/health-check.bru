@@ -1,0 +1,26 @@
+meta {
+  name: Health Check
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/docs
+  body: none
+  auth: none
+}
+
+script:pre-request {
+  // Check if API is running and accessible
+}
+
+script:post-response {
+  // API documentation should be accessible
+}
+
+tests {
+  test("API is accessible", function() {
+    expect(res.status).to.equal(200);
+    expect(res.headers).to.have.property("content-type");
+  });
+}

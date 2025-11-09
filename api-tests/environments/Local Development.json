@@ -1,0 +1,35 @@
+{
+  "name": "Local Development",
+  "variables": [
+    {
+      "name": "BASE_URL",
+      "value": "http://localhost:8000",
+      "enabled": true
+    },
+    {
+      "name": "API_VERSION",
+      "value": "api/v1",
+      "enabled": true
+    },
+    {
+      "name": "access_token",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "name": "test_user_id",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "name": "test_user_email",
+      "value": "",
+      "enabled": true
+    },
+    {
+      "name": "test_task_id",
+      "value": "",
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+meta {
+  name: List Tasks
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{BASE_URL}}/{{API_VERSION}}/tasks/
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ access_token }}
+}
+
+script:pre-request {
+  // Get all tasks for the authenticated user
+}
+
+script:post-response {
+  // Store task list for reference
+}
+
+tests {
+  test("Task list retrieved successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.be.an("array");
+  });
+  
+  test("Tasks have required fields", function() {
+    if (res.body.length > 0) {
+      const task = res.body[0];
+      expect(task).to.have.property("id");
+      expect(task).to.have.property("title");
+      expect(task).to.have.property("user_id");
+    }
+  });
+}

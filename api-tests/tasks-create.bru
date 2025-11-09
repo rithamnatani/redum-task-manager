@@ -1,0 +1,45 @@
+meta {
+  name: Create Task
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/{{API_VERSION}}/tasks/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ access_token }}
+}
+
+body:json {
+  {
+    "title": "Complete project setup",
+    "description": "Finish setting up the Redum Task Manager API and frontend",
+    "due_date": "2025-12-01T10:00:00Z",
+    "priority": 1
+  }
+}
+
+script:pre-request {
+  // Create a new task
+}
+
+script:post-response {
+  if (res.status === 200) {
+    const data = res.body;
+    bru.setEnvVar("test_task_id", data.id);
+  }
+}
+
+tests {
+  test("Task creation successful", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("title");
+    expect(res.body.title).to.equal("Complete project setup");
+    expect(res.body).to.have.property("user_id");
+  });
+}
