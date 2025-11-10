@@ -1,0 +1,37 @@
+meta {
+  name: Delete Task
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{BASE_URL}}/{{API_VERSION}}/tasks/{{test_task_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ access_token }}
+}
+
+script:pre-request {
+  // Delete a task
+  // Requires test_task_id from task creation
+}
+
+script:post-response {
+  if (res.status === 204) {
+    console.log("Task deleted successfully");
+    bru.setEnvVar("test_task_id", null);
+  }
+}
+
+tests {
+  test("Task deletion successful", function() {
+    expect(res.status).to.equal(204);
+  });
+  
+  test("Response body should be empty", function() {
+    expect(res.body).to.be.oneOf([null, undefined, ""]);
+  });
+}

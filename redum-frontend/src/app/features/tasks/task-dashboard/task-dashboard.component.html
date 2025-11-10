@@ -1,0 +1,100 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Task Board</h1>
+    <button mat-fab color="primary" (click)="openCreateTaskDialog()" aria-label="Create new task">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <div class="kanban-board" cdkDropListGroup>
+      <!-- To Do Column -->
+      <div class="kanban-column">
+        <div class="column-header todo-header">
+          <h2>To Do</h2>
+          <span class="task-count">{{ todoTasks().length }}</span>
+        </div>
+        <div 
+          class="task-list"
+          cdkDropList
+          [cdkDropListData]="todoTasks()"
+          (cdkDropListDropped)="onDrop($event, 'todo')">
+          @for (task of todoTasks(); track task.id) {
+            <div cdkDrag>
+              <app-task-card 
+                [task]="task"
+                (edit)="onEditTask($event)"
+                (delete)="onDeleteTask($event)">
+              </app-task-card>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <mat-icon>inbox</mat-icon>
+              <p>No tasks</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- In Progress Column -->
+      <div class="kanban-column">
+        <div class="column-header in-progress-header">
+          <h2>In Progress</h2>
+          <span class="task-count">{{ inProgressTasks().length }}</span>
+        </div>
+        <div 
+          class="task-list"
+          cdkDropList
+          [cdkDropListData]="inProgressTasks()"
+          (cdkDropListDropped)="onDrop($event, 'in_progress')">
+          @for (task of inProgressTasks(); track task.id) {
+            <div cdkDrag>
+              <app-task-card 
+                [task]="task"
+                (edit)="onEditTask($event)"
+                (delete)="onDeleteTask($event)">
+              </app-task-card>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <mat-icon>inbox</mat-icon>
+              <p>No tasks</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Done Column -->
+      <div class="kanban-column">
+        <div class="column-header done-header">
+          <h2>Done</h2>
+          <span class="task-count">{{ doneTasks().length }}</span>
+        </div>
+        <div 
+          class="task-list"
+          cdkDropList
+          [cdkDropListData]="doneTasks()"
+          (cdkDropListDropped)="onDrop($event, 'done')">
+          @for (task of doneTasks(); track task.id) {
+            <div cdkDrag>
+              <app-task-card 
+                [task]="task"
+                (edit)="onEditTask($event)"
+                (delete)="onDeleteTask($event)">
+              </app-task-card>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <mat-icon>inbox</mat-icon>
+              <p>No tasks</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

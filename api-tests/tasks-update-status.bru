@@ -1,0 +1,51 @@
+meta {
+  name: Update Task Status (Kanban)
+  type: http
+  seq: 11
+}
+
+put {
+  url: {{BASE_URL}}/{{API_VERSION}}/tasks/{{test_task_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ access_token }}
+}
+
+body:json {
+  {
+    "status": "done"
+  }
+}
+
+script:pre-request {
+  // Test status update for Kanban board
+  // Simulates moving a task to "done" column
+}
+
+script:post-response {
+  if (res.status === 200) {
+    const data = res.body;
+    console.log("Task status updated:", data.status);
+  }
+}
+
+tests {
+  test("Status update successful", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property("status");
+    expect(res.body.status).to.equal("done");
+  });
+  
+  test("Status is one of valid values", function() {
+    expect(res.body.status).to.be.oneOf(["todo", "in_progress", "done"]);
+  });
+  
+  test("Other fields remain unchanged", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("title");
+    expect(res.body).to.have.property("user_id");
+  });
+}

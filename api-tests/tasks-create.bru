@@ -19,7 +19,8 @@ body:json {
     "title": "Complete project setup",
     "description": "Finish setting up the Redum Task Manager API and frontend",
     "due_date": "2025-12-01T10:00:00Z",
-    "priority": 1
+    "priority": 1,
+    "status": "todo"
   }
 }
 
@@ -41,5 +42,7 @@ tests {
     expect(res.body).to.have.property("title");
     expect(res.body.title).to.equal("Complete project setup");
     expect(res.body).to.have.property("user_id");
+    expect(res.body).to.have.property("status");
+    expect(res.body.status).to.equal("todo");
   });
 }

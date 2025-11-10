@@ -5,13 +5,16 @@ meta {
 }
 
 post {
-  url: {{BASE_URL}}/{{API_VERSION}}/auth/token?email=test@example.com&password=test123
-  body: none
+  url: {{BASE_URL}}/{{API_VERSION}}/auth/token
+  body: json
   auth: none
 }
 
-script:pre-request {
-  // Login using query parameters as expected by FastAPI
+body:json {
+  {
+    "email": "test@example.com",
+    "password": "test123"
+  }
 }
 
 script:post-response {
