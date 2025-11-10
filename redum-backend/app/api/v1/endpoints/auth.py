@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.domain.schemas.user import UserCreate, UserRead
+from app.domain.schemas.user import UserCreate, UserRead, LoginRequest
 from app.domain.schemas.token import Token
 from app.use_cases.auth.auth_service import AuthService
 from app.infrastructure.database.session import get_db
@@ -23,8 +23,8 @@ def register(payload: UserCreate, svc: AuthService = Depends(get_auth_service)):
 
 
 @router.post("/token", response_model=Token)
-def login(email: str, password: str, svc: AuthService = Depends(get_auth_service)):
+def login(payload: LoginRequest, svc: AuthService = Depends(get_auth_service)):
     try:
-        return svc.login_for_access_token(email=email, password=password)
+        return svc.login_for_access_token(email=payload.email, password=payload.password)
     except Exception as exc:
         raise HTTPException(status_code=401, detail=str(exc))

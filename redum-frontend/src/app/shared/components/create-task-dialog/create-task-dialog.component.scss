@@ -1,0 +1,60 @@
+::ng-deep .mat-mdc-dialog-surface {
+  padding-top: 0;
+}
+
+h2.dialog-title {
+  margin: 0;
+  padding: 24px 24px 0;
+  margin-bottom: 12px;
+}
+
+mat-dialog-content {
+  min-width: 500px;
+  padding: 16px 24px 24px;
+
+  mat-form-field {
+    padding-top: 6px;
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .title-field-with-ai {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    mat-form-field {
+      flex: 1;
+    }
+
+    .ai-button {
+      margin-top: 8px;
+      
+      mat-icon {
+        color: #667eea;
+      }
+
+      &:disabled mat-icon {
+        color: rgba(0, 0, 0, 0.26);
+      }
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+
+    .half-width {
+      flex: 1;
+      margin-bottom: 16px;
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0;
+}

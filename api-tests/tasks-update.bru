@@ -1,0 +1,56 @@
+meta {
+  name: Update Task
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{BASE_URL}}/{{API_VERSION}}/tasks/{{test_task_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{ access_token }}
+}
+
+body:json {
+  {
+    "title": "Updated project setup",
+    "description": "Updated: Finish setting up the Redum Task Manager API and frontend with new features",
+    "priority": 2,
+    "status": "in_progress"
+  }
+}
+
+script:pre-request {
+  // Update an existing task
+  // Requires test_task_id from task creation
+}
+
+script:post-response {
+  if (res.status === 200) {
+    const data = res.body;
+    console.log("Task updated successfully:", data);
+  }
+}
+
+tests {
+  test("Task update successful", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("title");
+    expect(res.body.title).to.equal("Updated project setup");
+    expect(res.body.priority).to.equal(2);
+  });
+  
+  test("Task update returns correct fields", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("title");
+    expect(res.body).to.have.property("description");
+    expect(res.body).to.have.property("status");
+    expect(res.body.status).to.equal("in_progress");
+    expect(res.body).to.have.property("user_id");
+    expect(res.body).to.have.property("created_at");
+  });
+}

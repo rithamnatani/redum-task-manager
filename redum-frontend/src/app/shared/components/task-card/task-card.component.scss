@@ -1,0 +1,69 @@
+.task-card {
+  margin-bottom: 12px;
+  cursor: move;
+  transition: box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  mat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+
+    mat-card-title {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+    }
+  }
+
+  &:hover {
+    mat-card-header .card-actions {
+      opacity: 1;
+    }
+  }
+
+  .task-description {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 8px 0;
+    line-height: 1.5;
+  }
+
+  .task-metadata {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+
+    mat-chip {
+      font-size: 12px;
+      height: 24px;
+    }
+
+    .due-date {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.6);
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+<h2 mat-dialog-title class="dialog-title">{{ isEditMode ? 'Edit Task' : 'Create New Task' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="taskForm">
+    <div class="title-field-with-ai">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" placeholder="Enter task title">
+        @if (taskForm.get('title')?.hasError('required')) {
+          <mat-error>Title is required</mat-error>
+        }
+      </mat-form-field>
+      
+      <button 
+        mat-icon-button 
+        type="button"
+        [disabled]="aiGenerateDisabled()"
+        (click)="onAiGenerate()"
+        matTooltip="AI Generate (Coming Soon)"
+        class="ai-button">
+        <mat-icon>auto_awesome</mat-icon>
+      </button>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea 
+        matInput 
+        formControlName="description" 
+        placeholder="Enter task description"
+        rows="4"></textarea>
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Priority</mat-label>
+        <mat-select formControlName="priority">
+          <mat-option [value]="null">None</mat-option>
+          <mat-option [value]="1">Low</mat-option>
+          <mat-option [value]="2">Medium</mat-option>
+          <mat-option [value]="3">High</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Due Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="due_date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    @if (isEditMode) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          @for (option of statusOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="taskForm.invalid">
+    {{ isEditMode ? 'Save' : 'Create' }}
+  </button>
+</mat-dialog-actions>
