@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     ]
     CHROMA_DB_PATH: str = "./chroma-storage"
     GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "models/gemini-1.5-flash"
+    GEMINI_MODEL: str = "gemini-2.5-flash"
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, value: Any) -> list[str]:  # noqa: N805

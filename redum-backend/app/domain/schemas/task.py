@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Literal, Optional, Union
 
-from pydantic import BaseModel, validator, root_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 from app.domain.models.task import TaskStatus
 
@@ -35,11 +35,9 @@ class TaskRead(BaseModel):
     user_id: int
     created_at: Optional[datetime]
 
-    class Config:
-        orm_mode = True
-        use_enum_values = True
+    model_config = ConfigDict(from_attributes=True, validate_assignment=True)
 
-    @validator("status", pre=True, always=True)
+    @field_validator("status", mode="before")
     def serialize_status(
         cls, value: Union[TaskStatusType, TaskStatus]
     ) -> TaskStatusType:
@@ -54,17 +52,17 @@ class TaskSuggestionRequest(BaseModel):
     priority: Optional[int] = None
     status: Optional[TaskStatusType] = None
 
-    @validator("title", "description", pre=True)
+    @field_validator("title", "description", mode="before")
     def empty_str_to_none(cls, value: Optional[str]) -> Optional[str]:  # noqa: N805
         if isinstance(value, str) and not value.strip():
             return None
         return value
 
-    @root_validator
-    def require_title_or_description(cls, values: dict[str, Optional[str]]) -> dict[str, Optional[str]]:  # noqa: N805
-        if not values.get("title") and not values.get("description"):
+    @model_validator(mode="after")
+    def require_title_or_description(self) -> "TaskSuggestionRequest":  # noqa: N805
+        if not self.title and not self.description:
             raise ValueError("Provide at least a title or description for suggestions")
-        return values
+        return self
 
 
 class TaskSuggestionRead(BaseModel):
@@ -72,3 +70,5 @@ class TaskSuggestionRead(BaseModel):
     description: Optional[str] = None
     priority: Optional[int] = None
     status: Optional[TaskStatusType] = None
+
+    model_config = ConfigDict(from_attributes=True)

@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import chromadb
 from chromadb.api.types import Documents, EmbeddingFunction, Embeddings
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from google import generativeai as genai
+from google.api_core import exceptions as google_exceptions
 
 from app.core.config import get_settings
 from app.domain.schemas.task import TaskRead
@@ -58,7 +60,16 @@ class RAGService:
             name=self.COLLECTION_NAME,
             embedding_function=_EmbeddingFunctionWrapper(model_name=embedding_model),
         )
-        self._gemini_model = genai.GenerativeModel(self.settings.GEMINI_MODEL)
+        try:
+            self._gemini_model = genai.GenerativeModel(self.settings.GEMINI_MODEL)
+        except google_exceptions.GoogleAPIError as exc:
+            raise ValueError(
+                f"Gemini model '{self.settings.GEMINI_MODEL}' is not available: {exc}"
+            ) from exc
+        except Exception as exc:  # pragma: no cover - defensive fallback
+            raise ValueError(
+                f"Failed to initialize Gemini model '{self.settings.GEMINI_MODEL}'"
+            ) from exc
 
     def add_task_to_kb(self, task: TaskRead) -> None:
         """Embed and upsert task data into Chroma."""
@@ -111,9 +122,14 @@ class RAGService:
 
         try:
             response = self._gemini_model.generate_content(llm_prompt)
+        except google_exceptions.GoogleAPIError as exc:
+            logger.warning("Gemini generation failed: %s", exc)
+            raise ValueError(
+                "Gemini service is unavailable or the model does not support this request"
+            ) from exc
         except Exception as exc:  # pragma: no cover - defensive logging
             logger.warning("Gemini generation failed: %s", exc)
-            return TaskSuggestion()
+            raise ValueError("Gemini service encountered an unexpected error") from exc
 
         output = self._extract_response_text(response)
         parsed = self._parse_llm_output(output)

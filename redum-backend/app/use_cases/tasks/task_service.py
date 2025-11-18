@@ -66,13 +66,16 @@ class TaskService:
         if not self.rag_service:
             raise HTTPException(status_code=503, detail="Suggestions are not configured")
 
-        suggestion: TaskSuggestion = self.rag_service.suggest_metadata(
-            user_id=user_id,
-            description=payload.description or "",
-            title=payload.title,
-            priority=payload.priority,
-            status=payload.status,
-        )
+        try:
+            suggestion: TaskSuggestion = self.rag_service.suggest_metadata(
+                user_id=user_id,
+                description=payload.description or "",
+                title=payload.title,
+                priority=payload.priority,
+                status=payload.status,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
         suggestion_read = TaskSuggestionRead.model_validate(suggestion)
         suggestion_data = suggestion_read.model_dump()
 
