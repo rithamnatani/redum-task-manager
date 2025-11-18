@@ -3,10 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.endpoints import auth, tasks
 from app.infrastructure.database.session import engine
 from app.infrastructure.database.base import Base
-from app.core.config import Settings
+from app.core.config import get_settings
 
 
-settings = Settings()
+settings = get_settings()
 
 
 def create_app() -> FastAPI:
@@ -15,7 +15,7 @@ def create_app() -> FastAPI:
     # Configure CORS
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:4200"],  # Angular default port
+        allow_origins=settings.BACKEND_CORS_ORIGINS,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

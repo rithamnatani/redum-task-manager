@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 from passlib.context import CryptContext
-from jose import jwt
+from jose import JWTError, jwt
 from app.domain.schemas.user import UserCreate, UserRead
 from app.domain.schemas.token import Token
 from app.infrastructure.repositories.user_repository import UserRepository
@@ -39,3 +38,24 @@ class AuthService:
         to_encode = {"sub": str(user.id), "exp": expire}
         access_token = jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
         return Token(access_token=access_token, token_type="bearer")
+
+    def get_user_from_token(self, token: str) -> UserRead:
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        except JWTError as exc:
+            raise ValueError("Could not validate credentials") from exc
+
+        sub = payload.get("sub")
+        if sub is None:
+            raise ValueError("Could not validate credentials")
+
+        try:
+            user_id = int(sub)
+        except ValueError as exc:
+            raise ValueError("Could not validate credentials") from exc
+
+        user = self.repo.get_by_id(user_id)
+        if not user:
+            raise ValueError("Could not validate credentials")
+
+        return UserRead.model_validate(user, from_attributes=True)

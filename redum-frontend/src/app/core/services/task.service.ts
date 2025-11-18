@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { Task, CreateTaskRequest, UpdateTaskRequest } from '../models/task.model';
+import { Task, CreateTaskRequest, UpdateTaskRequest, TaskSuggestion, TaskSuggestionRequest } from '../models/task.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -53,5 +53,9 @@ export class TaskService {
 
   updateTaskStatus(id: number, status: 'todo' | 'in_progress' | 'done'): Observable<Task> {
     return this.updateTask(id, { status });
+  }
+
+  suggestTaskMetadata(data: TaskSuggestionRequest): Observable<TaskSuggestion> {
+    return this.http.post<TaskSuggestion>(`${this.API_URL}/tasks/suggest`, data);
   }
 }
