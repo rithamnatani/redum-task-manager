@@ -23,3 +23,17 @@ export interface UpdateTaskRequest {
   priority?: number;
   status?: 'todo' | 'in_progress' | 'done';
 }
+
+export interface TaskSuggestion {
+  title?: string | null;
+  description?: string | null;
+  priority?: number | null;
+  status?: 'todo' | 'in_progress' | 'done' | null;
+}
+
+export interface TaskSuggestionRequest {
+  title?: string;
+  description?: string;
+  priority?: number;
+  status?: 'todo' | 'in_progress' | 'done';
+}

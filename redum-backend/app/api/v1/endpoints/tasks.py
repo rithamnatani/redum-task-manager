@@ -1,21 +1,48 @@
+from functools import lru_cache
+from typing import List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List
-from app.domain.schemas.task import TaskCreate, TaskRead, TaskUpdate
-from app.use_cases.tasks.task_service import TaskService
-from app.infrastructure.database.session import get_db
-from sqlalchemy.orm import Session
-from app.infrastructure.repositories.task_repository import TaskRepository
 from fastapi.security import OAuth2PasswordBearer
-from app.use_cases.auth.auth_service import AuthService
+from sqlalchemy.orm import Session
+
+from app.core.config import get_settings
+from app.domain.schemas.task import (
+    TaskCreate,
+    TaskRead,
+    TaskSuggestionRead,
+    TaskSuggestionRequest,
+    TaskUpdate,
+)
+from app.infrastructure.database.session import get_db
+from app.infrastructure.repositories.task_repository import TaskRepository
 from app.infrastructure.repositories.user_repository import UserRepository
+from app.services.ai_service import RAGService
+from app.use_cases.auth.auth_service import AuthService
+from app.use_cases.tasks.task_service import TaskService
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 
 
-def get_task_service(db: Session = Depends(get_db)) -> TaskService:
+@lru_cache(maxsize=1)
+def _get_rag_service_cached() -> Optional[RAGService]:
+    settings = get_settings()
+    try:
+        return RAGService(settings=settings)
+    except ValueError:
+        return None
+
+
+def get_rag_service() -> Optional[RAGService]:
+    return _get_rag_service_cached()
+
+
+def get_task_service(
+    db: Session = Depends(get_db),
+    rag_service: Optional[RAGService] = Depends(get_rag_service),
+) -> TaskService:
     repo = TaskRepository(db)
-    return TaskService(repo)
+    return TaskService(repo, rag_service)
 
 
 def get_auth_service(db: Session = Depends(get_db)) -> AuthService:
@@ -69,3 +96,12 @@ def delete_task(
 ):
     svc.delete_task(task_id=task_id, user_id=user_id)
     return None
+
+
+@router.post("/suggest", response_model=TaskSuggestionRead)
+def suggest_task_metadata(
+    payload: TaskSuggestionRequest,
+    svc: TaskService = Depends(get_task_service),
+    user_id: int = Depends(get_current_user_id),
+):
+    return svc.suggest_task_metadata(user_id=user_id, payload=payload)

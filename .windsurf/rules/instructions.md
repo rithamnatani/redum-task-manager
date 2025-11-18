@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Copilot Instructions for Redum Task Manager
 
 ## 1. Overview

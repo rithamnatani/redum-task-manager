@@ -179,3 +179,7 @@ coverage/
 # Temporary files
 tmp/
 temp/
+
+
+#filler
+.results/

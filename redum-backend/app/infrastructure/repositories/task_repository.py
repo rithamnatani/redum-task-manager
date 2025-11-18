@@ -15,6 +15,7 @@ class TaskRepository(ITaskRepository):
             description=task_create.description,
             due_date=task_create.due_date,
             priority=task_create.priority,
+            status=task_create.status,
             user_id=user_id,
         )
         self.db.add(task)

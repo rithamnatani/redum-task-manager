@@ -14,9 +14,9 @@
       <button 
         mat-icon-button 
         type="button"
-        [disabled]="aiGenerateDisabled()"
+        [disabled]="isSuggesting()"
         (click)="onAiGenerate()"
-        matTooltip="AI Generate (Coming Soon)"
+        matTooltip="Get AI Suggestions"
         class="ai-button">
         <mat-icon>auto_awesome</mat-icon>
       </button>
