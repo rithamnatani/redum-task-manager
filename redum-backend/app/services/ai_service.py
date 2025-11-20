@@ -2,16 +2,13 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import chromadb
-from chromadb.api.types import Documents, EmbeddingFunction, Embeddings
-from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from google import generativeai as genai
 from google.api_core import exceptions as google_exceptions
 
 from app.core.config import get_settings
+from app.core.vector_store import VectorStoreProtocol
 from app.domain.schemas.task import TaskRead
 
 
@@ -26,40 +23,23 @@ class TaskSuggestion:
     status: Optional[str] = None
 
 
-class _EmbeddingFunctionWrapper(EmbeddingFunction[Documents]):
-    """Adapter to plug sentence-transformers into ChromaDB."""
-
-    def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2") -> None:
-        self._function = SentenceTransformerEmbeddingFunction(model_name=model_name)
-
-    def __call__(self, input: Documents) -> Embeddings:  # noqa: A003 - Chroma signature
-        return self._function(input)
-
-
 class RAGService:
     """Service responsible for knowledge ingestion and metadata suggestions."""
 
-    COLLECTION_NAME = "tasks"
-
     def __init__(
         self,
+        vector_store: VectorStoreProtocol,
         *,
         settings=None,
-        embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
     ) -> None:
         self.settings = settings or get_settings()
+        self.vector_store = vector_store
+        
         if not self.settings.GEMINI_API_KEY:
             raise ValueError("GEMINI_API_KEY must be configured to use RAGService")
 
         genai.configure(api_key=self.settings.GEMINI_API_KEY)
 
-        storage_path = Path(self.settings.CHROMA_DB_PATH).expanduser().resolve()
-        storage_path.mkdir(parents=True, exist_ok=True)
-        self._client = chromadb.PersistentClient(path=str(storage_path))
-        self._collection = self._client.get_or_create_collection(
-            name=self.COLLECTION_NAME,
-            embedding_function=_EmbeddingFunctionWrapper(model_name=embedding_model),
-        )
         try:
             self._gemini_model = genai.GenerativeModel(self.settings.GEMINI_MODEL)
         except google_exceptions.GoogleAPIError as exc:
@@ -72,7 +52,7 @@ class RAGService:
             ) from exc
 
     def add_task_to_kb(self, task: TaskRead) -> None:
-        """Embed and upsert task data into Chroma."""
+        """Embed and upsert task data into vector store."""
 
         document = self._build_task_document(task)
         metadata = {
@@ -83,7 +63,7 @@ class RAGService:
             "status": task.status,
         }
 
-        self._collection.upsert(
+        self.vector_store.add_documents(
             ids=[str(task.id)],
             documents=[document],
             metadatas=[metadata],
@@ -102,13 +82,13 @@ class RAGService:
 
         query = self._build_query_prompt(description=description, title=title)
         try:
-            results = self._collection.query(
+            results = self.vector_store.query(
                 query_texts=[query],
                 where={"user_id": user_id},
                 n_results=5,
             )
         except Exception as exc:  # pragma: no cover - defensive logging
-            logger.warning("Chroma query failed: %s", exc)
+            logger.warning("Vector store query failed: %s", exc)
             results = {"documents": [[]]}
 
         context_snippets = self._format_context(results)
@@ -147,7 +127,7 @@ class RAGService:
         if not task_id:
             return
         try:
-            self._collection.delete(ids=[str(task_id)])
+            self.vector_store.delete(ids=[str(task_id)])
         except Exception as exc:  # pragma: no cover - defensive logging
             logger.warning("Failed to remove task %s from knowledge base: %s", task_id, exc)
 

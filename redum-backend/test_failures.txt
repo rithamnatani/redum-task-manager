@@ -1,0 +1,135 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.1, pluggy-1.6.0
+rootdir: C:\Users\Admin\Projects\redum-task-manager\redum-backend
+plugins: anyio-4.11.0
+collected 6 items
+
+tests\test_vector_stores.py ..FF                                         [ 66%]
+tests\test_rag_service.py F.                                             [100%]
+
+================================== FAILURES ===================================
+_________________ TestPineconeVectorStore.test_add_documents __________________
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\unittest\mock.py:1375: in patched
+    with self.decoration_helper(patched,
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\unittest\mock.py:1357: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\contextlib.py:517: in enter_context
+    result = _enter(cm)
+             ^^^^^^^^^^
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\unittest\mock.py:1446: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x000001D3A14F58D0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'app.infrastructure.vector_stores.pinecone' from 'C:\\Users\\Admin\\Projects\\redum-task-manager\\redum-backend\\app\\infrastructure\\vector_stores\\pinecone.py'> does not have the attribute 'SentenceTransformer'
+
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\unittest\mock.py:1419: AttributeError
+_____________________ TestPineconeVectorStore.test_query ______________________
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\unittest\mock.py:1375: in patched
+    with self.decoration_helper(patched,
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\unittest\mock.py:1357: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\contextlib.py:517: in enter_context
+    result = _enter(cm)
+             ^^^^^^^^^^
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\unittest\mock.py:1446: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x000001D3A14F5C90>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'app.infrastructure.vector_stores.pinecone' from 'C:\\Users\\Admin\\Projects\\redum-task-manager\\redum-backend\\app\\infrastructure\\vector_stores\\pinecone.py'> does not have the attribute 'SentenceTransformer'
+
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\unittest\mock.py:1419: AttributeError
+_____________________ TestRAGService.test_add_task_to_kb ______________________
+
+self = <tests.test_rag_service.TestRAGService testMethod=test_add_task_to_kb>
+mock_genai = <MagicMock name='genai' id='2009488545040'>
+
+    @patch("app.services.ai_service.genai")
+    def test_add_task_to_kb(self, mock_genai):
+        mock_vector_store = MagicMock()
+        settings = MagicMock()
+        settings.GEMINI_API_KEY = "test-key"
+    
+        service = RAGService(vector_store=mock_vector_store, settings=settings)
+    
+>       task = TaskRead(id=1, user_id=1, title="Test Task", priority=1, status="todo", description="desc")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for TaskRead
+E       due_date
+E         Field required [type=missing, input_value={'id': 1, 'user_id': 1, '..., 'description': 'desc'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.12/v/missing
+E       created_at
+E         Field required [type=missing, input_value={'id': 1, 'user_id': 1, '..., 'description': 'desc'}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.12/v/missing
+
+tests\test_rag_service.py:17: ValidationError
+============================== warnings summary ===============================
+app\core\config.py:21
+  C:\Users\Admin\Projects\redum-task-manager\redum-backend\app\core\config.py:21: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    @validator("BACKEND_CORS_ORIGINS", pre=True)
+
+app\core\config.py:7
+  C:\Users\Admin\Projects\redum-task-manager\redum-backend\app\core\config.py:7: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class Settings(BaseSettings):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_vector_stores.py::TestPineconeVectorStore::test_add_documents
+FAILED tests/test_vector_stores.py::TestPineconeVectorStore::test_query - Att...
+FAILED tests/test_rag_service.py::TestRAGService::test_add_task_to_kb - pydan...
+=================== 3 failed, 3 passed, 2 warnings in 5.36s ===================

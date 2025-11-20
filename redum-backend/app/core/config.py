@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     CHROMA_DB_PATH: str = "./chroma-storage"
     GEMINI_API_KEY: str = ""
     GEMINI_MODEL: str = "gemini-2.5-flash"
+    PINECONE_API_KEY: str = ""
+    PINECONE_ENV: str = "us-east-1"  # or PINECONE_INDEX_HOST if using serverless
+    VECTOR_STORE_TYPE: str = "chroma"  # chroma, pinecone, pgvector
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, value: Any) -> list[str]:  # noqa: N805

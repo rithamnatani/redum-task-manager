@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, func, Enum
 from sqlalchemy.orm import relationship
+from pgvector.sqlalchemy import Vector
 from app.infrastructure.database.base import Base
 import enum
 
@@ -29,6 +30,7 @@ class Task(Base):
         default=TaskStatus.TODO.value,
         server_default=TaskStatus.TODO.value,
     )
+    vector = Column(Vector(384), nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

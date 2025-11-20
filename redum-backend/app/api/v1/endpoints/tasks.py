@@ -16,6 +16,9 @@ from app.domain.schemas.task import (
 from app.infrastructure.database.session import get_db
 from app.infrastructure.repositories.task_repository import TaskRepository
 from app.infrastructure.repositories.user_repository import UserRepository
+from app.infrastructure.vector_stores.chroma import ChromaVectorStore
+from app.infrastructure.vector_stores.pinecone import PineconeVectorStore
+from app.infrastructure.vector_stores.pgvector_store import PgVectorStore
 from app.services.ai_service import RAGService
 from app.use_cases.auth.auth_service import AuthService
 from app.use_cases.tasks.task_service import TaskService
@@ -28,13 +31,36 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 def _get_rag_service_cached() -> Optional[RAGService]:
     settings = get_settings()
     try:
-        return RAGService(settings=settings)
-    except ValueError:
+        if settings.VECTOR_STORE_TYPE == "pinecone":
+            vector_store = PineconeVectorStore(settings=settings)
+        elif settings.VECTOR_STORE_TYPE == "chroma":
+            vector_store = ChromaVectorStore(settings=settings)
+        else:
+            # Fallback or default
+            vector_store = ChromaVectorStore(settings=settings)
+            
+        return RAGService(vector_store=vector_store, settings=settings)
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Failed to initialize RAGService: {e}")
         return None
 
 
-def get_rag_service() -> Optional[RAGService]:
-    return _get_rag_service_cached()
+def get_rag_service(db: Session = Depends(get_db)) -> Optional[RAGService]:
+    settings = get_settings()
+    try:
+        if settings.VECTOR_STORE_TYPE == "pgvector":
+            vector_store = PgVectorStore(session=db)
+            return RAGService(vector_store=vector_store, settings=settings)
+            
+        # For other stores, we can use the cached version to avoid re-initializing clients
+        return _get_rag_service_cached()
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Failed to initialize RAGService: {e}")
+        return None
 
 
 def get_task_service(

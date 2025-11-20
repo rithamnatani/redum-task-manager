@@ -1,0 +1,29 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.1, pluggy-1.6.0
+rootdir: C:\Users\Admin\Projects\redum-task-manager\redum-backend
+plugins: anyio-4.11.0
+collected 0 items / 1 error
+
+=================================== ERRORS ====================================
+________________ ERROR collecting tests/test_vector_stores.py _________________
+tests\test_vector_stores.py:5: in <module>
+    from app.infrastructure.vector_stores.pinecone import PineconeVectorStore
+app\infrastructure\vector_stores\pinecone.py:3: in <module>
+    from pinecone import Pinecone
+..\..\..\.pyenv\pyenv-win\versions\3.11.9\Lib\site-packages\pinecone\__init__.py:5: in <module>
+    raise Exception(
+E   Exception: The official Pinecone python package has been renamed from `pinecone-client` to `pinecone`. Please remove `pinecone-client` from your project dependencies and add `pinecone` instead. See the README at https://github.com/pinecone-io/pinecone-python-client for more information on using the python SDK.
+============================== warnings summary ===============================
+app\core\config.py:21
+  C:\Users\Admin\Projects\redum-task-manager\redum-backend\app\core\config.py:21: PydanticDeprecatedSince20: Pydantic V1 style `@validator` validators are deprecated. You should migrate to Pydantic V2 style `@field_validator` validators, see the migration guide for more details. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    @validator("BACKEND_CORS_ORIGINS", pre=True)
+
+app\core\config.py:7
+  C:\Users\Admin\Projects\redum-task-manager\redum-backend\app\core\config.py:7: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class Settings(BaseSettings):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_vector_stores.py - Exception: The official Pinecone python p...
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+======================== 2 warnings, 1 error in 0.71s =========================

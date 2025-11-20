@@ -28,7 +28,8 @@ def create_app() -> FastAPI:
     @app.on_event("startup")
     def on_startup():
         # Create tables for quick local testing (use alembic for production)
-        Base.metadata.create_all(bind=engine)
+        # Base.metadata.create_all(bind=engine)
+        pass
 
     return app
 
