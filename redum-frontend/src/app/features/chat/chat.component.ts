@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ChatService } from '../../../core/services/chat.service';
+import { ChatService } from '../../core/services/chat.service';
 
 @Component({
     selector: 'app-chat',
