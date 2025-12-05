@@ -1,0 +1,88 @@
+<div class="chat-container">
+  <mat-card class="chat-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>smart_toy</mat-icon>
+        AI Task Assistant
+      </mat-card-title>
+      <button mat-icon-button (click)="clearChat()" [disabled]="isEmpty()" title="Clear chat">
+        <mat-icon>delete_outline</mat-icon>
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="messages-container" #messageContainer>
+        @if (isEmpty()) {
+          <div class="empty-state">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            <h3>Start a conversation</h3>
+            <p>Ask me anything about your tasks! I can help you:</p>
+            <ul>
+              <li>Find and organize your tasks</li>
+              <li>Get task recommendations</li>
+              <li>Summarize your workload</li>
+            </ul>
+          </div>
+        }
+
+        @for (message of messages(); track $index) {
+          <div class="message" [class.user]="message.role === 'user'" [class.assistant]="message.role === 'assistant'">
+            <div class="message-avatar">
+              <mat-icon>{{ message.role === 'user' ? 'person' : 'smart_toy' }}</mat-icon>
+            </div>
+            <div class="message-content">
+              <div class="message-bubble">
+                {{ message.content }}
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (isLoading()) {
+          <div class="message assistant">
+            <div class="message-avatar">
+              <mat-icon>smart_toy</mat-icon>
+            </div>
+            <div class="message-content">
+              <div class="message-bubble typing">
+                <mat-spinner diameter="20"></mat-spinner>
+                <span>Thinking...</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (error()) {
+          <div class="error-message">
+            <mat-icon>error_outline</mat-icon>
+            {{ error() }}
+          </div>
+        }
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <div class="input-container">
+        <mat-form-field appearance="outline" class="message-input">
+          <mat-label>Type your message...</mat-label>
+          <input
+            matInput
+            [value]="currentMessage()"
+            (input)="currentMessage.set($any($event.target).value)"
+            (keydown)="onKeydown($event)"
+            [disabled]="isLoading()"
+            placeholder="Ask about your tasks..."
+          />
+        </mat-form-field>
+        <button
+          mat-fab
+          color="primary"
+          (click)="sendMessage()"
+          [disabled]="!currentMessage().trim() || isLoading()"
+        >
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

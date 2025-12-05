@@ -32,9 +32,7 @@ export class MainLayoutComponent {
 
   readonly navItems = [
     { path: '/tasks', icon: 'task', label: 'Tasks' },
-    // Future features can be added here
-    // { path: '/chat', icon: 'chat', label: 'Chat' },
-    // { path: '/settings', icon: 'settings', label: 'Settings' }
+    { path: '/chat', icon: 'smart_toy', label: 'AI Chat' },
   ];
 
   onLogout(): void {
