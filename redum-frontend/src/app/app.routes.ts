@@ -23,6 +23,10 @@ export const routes: Routes = [
       {
         path: 'tasks',
         loadComponent: () => import('./features/tasks/task-dashboard/task-dashboard.component').then(m => m.TaskDashboardComponent)
+      },
+      {
+        path: 'chat',
+        loadComponent: () => import('./features/chat/chat.component').then(m => m.ChatComponent)
       }
     ]
   },

@@ -2,8 +2,6 @@
 trigger: always_on
 ---
 
-# Copilot Instructions for Redum Task Manager
-
 ## 1. Overview
 These instructions ensure AI coding assistants extend the Redum Task Manager without breaking established architecture or style. Every guideline is based on the actual backend (FastAPI + SQLAlchemy) and frontend (Angular 20 + Angular Material) implementations in this repository—no external best practices unless already reflected in the codebase.
 
@@ -137,24 +135,5 @@ These instructions ensure AI coding assistants extend the Redum Task Manager wit
 - **Frontend State Management**: Services expose state as Angular signals; components derive computed views and must not mutate arrays in place—always update through service methods.
 - **Frontend UI**: Material components, SCSS co-location, drag-and-drop operations rely on CDK; dialogs should normalize data before returning to services.
 - **Auth Integration**: Token interceptor only tags `/api/v1/` calls; guard redirects preserve `returnUrl`; logout clears token via `TokenStorageService`.
-
-## 5. Example Prompt Usage
-**User prompt to Copilot**:
-> Build a task label management feature that lets users create, update, and assign labels to tasks from the dashboard.
-
-**Expected Copilot plan**:
-1. Backend
-   - `redum-backend/app/domain/models/label.py` + migrations (category: backend-domain-models/migration-scripts).
-   - Schema updates in `app/domain/schemas/label.py` and task schema to include labels (backend-domain-schemas).
-   - Repository + interface changes (`app/domain/interfaces`, `app/infrastructure/repositories/label_repository.py`).
-   - Use case methods in `app/use_cases/tasks/task_service.py` or new `labels` service.
-   - API routes in `app/api/v1/endpoints/labels.py` returning Pydantic read models.
-2. Frontend
-   - Extend models (`src/app/core/models/task.model.ts`) to include label arrays (frontend-models).
-   - Add service methods in `TaskService` for label CRUD (frontend-services).
-   - Create standalone UI components (`src/app/shared/components/label-chip/…`) and dialogs (frontend-shared-task-card-components / shared-dialog-components).
-   - Update dashboard with new drag/drop interactions or forms (frontend-task-dashboard-components).
-   - Extend routes/config if new pages are needed (frontend-app-configuration).
-3. Ensure guard/interceptor logic remains unchanged, reuse signals for state, and wire new environment/config keys if backend endpoints move.
 
 Following these instructions keeps new features aligned with the existing FastAPI clean architecture and Angular standalone/Material patterns while maintaining consistency across backend and frontend layers.
