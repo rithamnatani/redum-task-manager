@@ -17,8 +17,8 @@ The main dashboard provides a Kanban-style view of your productivity.
 When creating a task, the "Get AI Suggestions" feature uses RAG to automatically fill in descriptions and priorities based on your previous habits.
 <br>
 <p align="center">
-  <img src="/assets/suggestions_after.png" width="45%" alt="Create Task Modal" />
-  <img src="/assets/suggestions_before.png" width="45%" alt="AI Suggestion Applied" />
+    <img src="/assets/suggestions_before.png" width="45%" alt="Create Task Modal Applied" />
+    <img src="/assets/suggestions_after.png" width="45%" alt="AI Suggestion Applied" />
 </p>
 
 ### AI Task Assistant
