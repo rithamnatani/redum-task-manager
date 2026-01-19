@@ -14,10 +14,7 @@
       margin: 0;
       font-size: 24px;
       font-weight: 600;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #667eea;
     }
   }
 
@@ -31,7 +28,7 @@
 
       &.active-link {
         background: rgba(102, 126, 234, 0.1);
-        
+
         mat-icon {
           color: #667eea;
         }
