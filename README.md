@@ -72,8 +72,6 @@ redum-task-manager/
 ### High-Concurrency Backend Architecture
  - Asynchronous I/O: Leveraged FastAPI’s async/await throughout the service layer to ensure non-blocking I/O operations, critical for scaling task retrieval and AI processing.
 
- - State Management & Caching: Integrated Redis as a write-through cache for frequently accessed task metadata, reducing Postgres load by ~40% for read-heavy workloads.
-
  - Pydantic v2 Validation: Utilized strict typing and Pydantic’s Rust-based validation engine for low-latency serialization of incoming JSON payloads.
 
 ### Retrieval-Augmented Generation (RAG) Pipeline
